@@ -1,4 +1,4 @@
-package org.jcr.entidades;
+package org.jcr.enums;
 
 
 public enum EspecialidadMedica {

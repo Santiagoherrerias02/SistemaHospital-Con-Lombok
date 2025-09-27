@@ -1,4 +1,10 @@
-package org.jcr.entidades;
+package org.jcr.servicios;
+
+import org.jcr.entidades.Cita;
+import org.jcr.entidades.Medico;
+import org.jcr.entidades.Paciente;
+import org.jcr.entidades.Sala;
+import org.jcr.excepciones.CitaException;
 
 import java.io.*;
 import java.time.LocalDateTime;

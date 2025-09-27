@@ -1,4 +1,4 @@
-package org.jcr.entidades;
+package org.jcr.excepciones;
 
 
 public class CitaException extends Exception {

@@ -1,4 +1,7 @@
 package org.jcr.entidades;
+import org.jcr.enums.EspecialidadMedica;
+import org.jcr.enums.TipoSangre;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;

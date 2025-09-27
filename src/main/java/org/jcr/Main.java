@@ -1,13 +1,16 @@
 
 package org.jcr;
 
+import org.jcr.enums.EspecialidadMedica;
 import org.jcr.entidades.*;
+import org.jcr.enums.EstadoCita;
+import org.jcr.enums.TipoSangre;
+import org.jcr.excepciones.CitaException;
+import org.jcr.servicios.CitaManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
-
 import java.util.*;
 
 public class Main {

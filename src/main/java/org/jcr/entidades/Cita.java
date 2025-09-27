@@ -1,4 +1,7 @@
 package org.jcr.entidades;
+import org.jcr.enums.EstadoCita;
+import org.jcr.excepciones.CitaException;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

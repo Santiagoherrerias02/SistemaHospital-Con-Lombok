@@ -1,4 +1,6 @@
 package org.jcr.entidades;
+import org.jcr.enums.EspecialidadMedica;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;

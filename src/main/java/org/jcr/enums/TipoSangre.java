@@ -1,4 +1,4 @@
-package org.jcr.entidades;
+package org.jcr.enums;
 public enum TipoSangre {
     A_POSITIVO("A+"),
     A_NEGATIVO("A-"),
