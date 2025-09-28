@@ -18,6 +18,8 @@ import java.util.Objects;
 @SuperBuilder
 
 public class Paciente extends Persona implements Serializable {
+    @Setter
+    private Long id;
     private final HistoriaClinica historiaClinica;
     private final String telefono;
     private final String direccion;

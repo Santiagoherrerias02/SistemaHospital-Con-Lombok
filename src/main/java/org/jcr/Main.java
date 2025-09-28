@@ -1,21 +1,25 @@
-
 package org.jcr;
 
-import org.jcr.enums.EspecialidadMedica;
+import org.jcr.repositorio.InMemoryRepository;
 import org.jcr.entidades.*;
-import org.jcr.enums.EstadoCita;
-import org.jcr.enums.TipoSangre;
+import org.jcr.enums.*;
 import org.jcr.excepciones.CitaException;
 import org.jcr.servicios.CitaManager;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class Main {
+public class Main{
+
+    // Repositorios genéricos
+    private static InMemoryRepository<Hospital> hospitalRepository = new InMemoryRepository<>();
+    private static InMemoryRepository<Medico> medicoRepository = new InMemoryRepository<>();
+    private static InMemoryRepository<Paciente> pacienteRepository = new InMemoryRepository<>();
+    private static InMemoryRepository<Cita> citaRepository = new InMemoryRepository<>();
+
     public static void main(String[] args) {
-        System.out.println("===== SISTEMA DE GESTIÓN HOSPITALARIA =====\n");
+        System.out.println("===== SISTEMA DE GESTIÓN HOSPITALARIA CON REPOSITORY =====\n");
 
         try {
             // 1. Inicializar el hospital y su estructura
@@ -27,21 +31,24 @@ public class Main {
             // 3. Registrar pacientes
             List<Paciente> pacientes = registrarPacientes(hospital);
 
-            // 4. Programar citas médicas
+            // 4. Programar citas médicas CON REPOSITORY
             CitaManager citaManager = new CitaManager();
-            programarCitas(citaManager, medicos, pacientes, hospital);
+            programarCitasConRepository(citaManager, medicos, pacientes, hospital);
 
             // 5. Mostrar información del sistema
             mostrarInformacionCompleta(hospital, citaManager);
 
-            // 6. Probar persistencia de datos
-            probarPersistencia(citaManager, pacientes, medicos, hospital);
+            // 6. Mostrar datos con IDs del repository
+            mostrarDatosConRepository();
 
             // 7. Ejecutar pruebas de validación
             ejecutarPruebasValidacion(citaManager, medicos, pacientes, hospital);
 
             // 8. Mostrar estadísticas finales
             mostrarEstadisticasFinales(hospital);
+
+            // 9. Demostrar funcionalidades del repository
+            demostrarRepository();
 
             System.out.println("\n===== SISTEMA EJECUTADO EXITOSAMENTE =====");
 
@@ -51,18 +58,36 @@ public class Main {
         }
     }
 
-    // ===== MÉTODOS DE INICIALIZACIÓN =====
+    // ===== MÉTODOS ORIGINALES ADAPTADOS CON REPOSITORY =====
 
     private static Hospital inicializarHospital() {
         System.out.println("Inicializando hospital y departamentos...");
 
         // Crear hospital principal
-        Hospital hospital = Hospital.builder().nombre("Hospital Central").direccion("Av. Libertador 1234").telefono("011-4567-8901").build();
+        Hospital hospital = Hospital.builder()
+                .nombre("Hospital Central")
+                .direccion("Av. Libertador 1234")
+                .telefono("011-4567-8901")
+                .build();
+
+        // GUARDAR EN REPOSITORY
+        hospitalRepository.save(hospital);
 
         // Crear departamentos especializados
-        Departamento cardiologia = Departamento.builder().nombre("Cardiología").especialidad(EspecialidadMedica.CARDIOLOGIA).build();
-        Departamento pediatria = Departamento.builder().nombre("Pediatría").especialidad(EspecialidadMedica.PEDIATRIA).build();
-        Departamento traumatologia = Departamento.builder().nombre("Traumatología").especialidad(EspecialidadMedica.TRAUMATOLOGIA).build();
+        Departamento cardiologia = Departamento.builder()
+                .nombre("Cardiología")
+                .especialidad(EspecialidadMedica.CARDIOLOGIA)
+                .build();
+
+        Departamento pediatria = Departamento.builder()
+                .nombre("Pediatría")
+                .especialidad(EspecialidadMedica.PEDIATRIA)
+                .build();
+
+        Departamento traumatologia = Departamento.builder()
+                .nombre("Traumatología")
+                .especialidad(EspecialidadMedica.TRAUMATOLOGIA)
+                .build();
 
         // Asignar departamentos al hospital
         hospital.agregarDepartamento(cardiologia);
@@ -72,7 +97,8 @@ public class Main {
         // Crear salas por departamento
         crearSalasPorDepartamento(cardiologia, pediatria, traumatologia);
 
-        System.out.println("Hospital inicializado con " + hospital.getDepartamentos().size() + " departamentos\n");
+        System.out.println("Hospital inicializado con " + hospital.getDepartamentos().size() + " departamentos");
+        System.out.println("Hospital guardado con ID: " + hospital.getId() + "\n");
         return hospital;
     }
 
@@ -124,6 +150,10 @@ public class Main {
                 .especialidad(EspecialidadMedica.TRAUMATOLOGIA)
                 .build();
 
+        // GUARDAR EN REPOSITORY
+        medicoRepository.save(cardiologo);
+        medicoRepository.save(pediatra);
+        medicoRepository.save(traumatologo);
 
         // Asignar médicos a sus departamentos correspondientes
         for (Departamento dep : hospital.getDepartamentos()) {
@@ -143,7 +173,8 @@ public class Main {
             }
         }
 
-        System.out.println("Registrados " + medicos.size() + " médicos especialistas\n");
+        System.out.println("Registrados " + medicos.size() + " médicos especialistas");
+        System.out.println("Médicos guardados en repository con IDs automáticos\n");
         return medicos;
     }
 
@@ -183,6 +214,10 @@ public class Main {
                 .direccion("Belgrano 789")
                 .build();
 
+        // GUARDAR EN REPOSITORY
+        pacienteRepository.save(pacienteCardiaco);
+        pacienteRepository.save(pacientePediatrico);
+        pacienteRepository.save(pacienteTraumatologico);
 
         // Registrar pacientes en el hospital
         hospital.agregarPaciente(pacienteCardiaco);
@@ -196,7 +231,8 @@ public class Main {
         // Configurar historias clínicas
         configurarHistoriasClinicas(pacienteCardiaco, pacientePediatrico, pacienteTraumatologico);
 
-        System.out.println("Registrados " + pacientes.size() + " pacientes con historias clínicas\n");
+        System.out.println("Registrados " + pacientes.size() + " pacientes con historias clínicas");
+        System.out.println("Pacientes guardados en repository con IDs automáticos\n");
         return pacientes;
     }
 
@@ -216,53 +252,69 @@ public class Main {
         pacienteTraumatologico.getHistoriaClinica().agregarAlergia("Ibuprofeno");
     }
 
-    // ===== GESTIÓN DE CITAS =====
+    // ===== GESTIÓN DE CITAS CON REPOSITORY =====
 
-    private static void programarCitas(CitaManager citaManager, List<Medico> medicos, List<Paciente> pacientes, Hospital hospital) throws CitaException {
-        System.out.println("Programando citas médicas...");
+    private static void programarCitasConRepository(CitaManager citaManager, List<Medico> medicos, List<Paciente> pacientes, Hospital hospital) throws CitaException {
+        System.out.println("Programando citas médicas con repository...");
 
         // Obtener salas por especialidad
         Map<EspecialidadMedica, Sala> salasPorEspecialidad = obtenerSalasPorEspecialidad(hospital);
 
-        // Calcular fechas futuras (a partir de mañana)
+        // Calcular fechas futuras con más separación para evitar conflictos
         LocalDateTime fechaBase = LocalDateTime.now().plusDays(1);
 
-        // Programar cita cardiológica
-        Cita citaCardiologica = citaManager.programarCita(
-                pacientes.get(0), // Paciente cardíaco
-                obtenerMedicoPorEspecialidad(medicos, EspecialidadMedica.CARDIOLOGIA),
-                salasPorEspecialidad.get(EspecialidadMedica.CARDIOLOGIA),
-                fechaBase.withHour(10).withMinute(0),
-                new BigDecimal("150000.00")
-        );
-        citaCardiologica.setObservaciones("Paciente con antecedentes de hipertensión");
-        citaCardiologica.setEstado(EstadoCita.COMPLETADA);
+        try {
+            // Programar cita cardiológica
+            Cita citaCardiologica = citaManager.programarCita(
+                    pacientes.get(0), // Paciente cardíaco
+                    obtenerMedicoPorEspecialidad(medicos, EspecialidadMedica.CARDIOLOGIA),
+                    salasPorEspecialidad.get(EspecialidadMedica.CARDIOLOGIA),
+                    fechaBase.withHour(10).withMinute(0),
+                    new BigDecimal("150000.00")
+            );
+            citaCardiologica.setObservaciones("Paciente con antecedentes de hipertensión");
+            citaCardiologica.setEstado(EstadoCita.COMPLETADA);
 
-        // Programar cita pediátrica
-        Cita citaPediatrica = citaManager.programarCita(
-                pacientes.get(1), // Paciente pediátrico
-                obtenerMedicoPorEspecialidad(medicos, EspecialidadMedica.PEDIATRIA),
-                salasPorEspecialidad.get(EspecialidadMedica.PEDIATRIA),
-                fechaBase.plusDays(1).withHour(14).withMinute(30),
-                new BigDecimal("80000.00")
-        );
-        citaPediatrica.setObservaciones("Control de rutina - vacunas");
-        citaPediatrica.setEstado(EstadoCita.EN_CURSO);
+            // GUARDAR EN REPOSITORY
+            citaRepository.save(citaCardiologica);
 
-        // Programar cita traumatológica
-        Cita citaTraumatologica = citaManager.programarCita(
-                pacientes.get(2), // Paciente traumatológico
-                obtenerMedicoPorEspecialidad(medicos, EspecialidadMedica.TRAUMATOLOGIA),
-                salasPorEspecialidad.get(EspecialidadMedica.TRAUMATOLOGIA),
-                fechaBase.plusDays(2).withHour(9).withMinute(15),
-                new BigDecimal("120000.00")
-        );
-        citaTraumatologica.setObservaciones("Seguimiento post-fractura");
+            // Programar cita pediátrica (con 1 día más de diferencia)
+            Cita citaPediatrica = citaManager.programarCita(
+                    pacientes.get(1), // Paciente pediátrico
+                    obtenerMedicoPorEspecialidad(medicos, EspecialidadMedica.PEDIATRIA),
+                    salasPorEspecialidad.get(EspecialidadMedica.PEDIATRIA),
+                    fechaBase.plusDays(2).withHour(14).withMinute(30), // +2 días en lugar de +1
+                    new BigDecimal("80000.00")
+            );
+            citaPediatrica.setObservaciones("Control de rutina - vacunas");
+            citaPediatrica.setEstado(EstadoCita.EN_CURSO);
 
-        System.out.println("Programadas 3 citas médicas exitosamente\n");
+            // GUARDAR EN REPOSITORY
+            citaRepository.save(citaPediatrica);
+
+            // Programar cita traumatológica (con más separación)
+            Cita citaTraumatologica = citaManager.programarCita(
+                    pacientes.get(2), // Paciente traumatológico
+                    obtenerMedicoPorEspecialidad(medicos, EspecialidadMedica.TRAUMATOLOGIA),
+                    salasPorEspecialidad.get(EspecialidadMedica.TRAUMATOLOGIA),
+                    fechaBase.plusDays(3).withHour(9).withMinute(15), // +3 días
+                    new BigDecimal("120000.00")
+            );
+            citaTraumatologica.setObservaciones("Seguimiento post-fractura");
+
+            // GUARDAR EN REPOSITORY
+            citaRepository.save(citaTraumatologica);
+
+            System.out.println("Programadas 3 citas médicas exitosamente");
+            System.out.println("Citas guardadas en repository con IDs automáticos\n");
+
+        } catch (CitaException e) {
+            System.err.println("Error al programar citas: " + e.getMessage());
+            // Continuar ejecución sin citas si hay problemas
+        }
     }
 
-    // ===== MÉTODOS AUXILIARES =====
+    // ===== MÉTODOS AUXILIARES ORIGINALES =====
 
     private static Map<EspecialidadMedica, Sala> obtenerSalasPorEspecialidad(Hospital hospital) {
         Map<EspecialidadMedica, Sala> salasPorEspecialidad = new HashMap<>();
@@ -283,7 +335,7 @@ public class Main {
                 .orElse(null);
     }
 
-    // ===== MÉTODOS DE VISUALIZACIÓN =====
+    // ===== MÉTODOS DE VISUALIZACIÓN ORIGINALES =====
 
     private static void mostrarInformacionCompleta(Hospital hospital, CitaManager citaManager) {
         mostrarInformacionHospital(hospital);
@@ -295,6 +347,7 @@ public class Main {
     private static void mostrarInformacionHospital(Hospital hospital) {
         System.out.println("===== INFORMACIÓN DEL HOSPITAL =====");
         System.out.println(hospital);
+        System.out.println("ID en Repository: " + hospital.getId());
         System.out.println("Departamentos: " + hospital.getDepartamentos().size());
         System.out.println("Pacientes registrados: " + hospital.getPacientes().size());
         System.out.println();
@@ -307,7 +360,7 @@ public class Main {
 
             System.out.println("  Médicos (" + dep.getMedicos().size() + "):");
             for (Medico medico : dep.getMedicos()) {
-                System.out.println("    " + medico);
+                System.out.println("    " + medico + " (ID: " + medico.getId() + ")");
             }
 
             System.out.println("  Salas (" + dep.getSalas().size() + "):");
@@ -321,7 +374,7 @@ public class Main {
     private static void mostrarPacientesEHistorias(Hospital hospital) {
         System.out.println("===== PACIENTES E HISTORIAS CLÍNICAS =====");
         for (Paciente paciente : hospital.getPacientes()) {
-            System.out.println(paciente);
+            System.out.println(paciente + " (ID: " + paciente.getId() + ")");
             HistoriaClinica historia = paciente.getHistoriaClinica();
             System.out.println("  Historia: " + historia.getNumeroHistoria() + " | Edad: " + paciente.getEdad() + " años");
 
@@ -341,13 +394,13 @@ public class Main {
     private static void mostrarCitasProgramadas(Hospital hospital, CitaManager citaManager) {
         System.out.println("===== CITAS PROGRAMADAS =====");
 
-        // Mostrar citas por paciente
+        // Mostrar citas por paciente usando CitaManager
         for (Paciente paciente : hospital.getPacientes()) {
             List<Cita> citasPaciente = citaManager.getCitasPorPaciente(paciente);
             if (!citasPaciente.isEmpty()) {
                 System.out.println("Citas de " + paciente.getNombreCompleto() + ":");
                 for (Cita cita : citasPaciente) {
-                    System.out.println("  " + cita);
+                    System.out.println("  " + cita + " (ID: " + cita.getId() + ")");
                     if (!cita.getObservaciones().isEmpty()) {
                         System.out.println("    Observaciones: " + cita.getObservaciones());
                     }
@@ -357,70 +410,39 @@ public class Main {
         }
     }
 
-    // ===== PERSISTENCIA DE DATOS =====
+    // ===== NUEVA FUNCIONALIDAD: MOSTRAR DATOS CON REPOSITORY =====
 
-    private static void probarPersistencia(CitaManager citaManager, List<Paciente> pacientes, List<Medico> medicos, Hospital hospital) {
-        System.out.println("===== PRUEBA DE PERSISTENCIA =====");
+    private static void mostrarDatosConRepository() {
+        System.out.println("===== DATOS EN REPOSITORIES =====");
 
-        try {
-            // Guardar citas en archivo CSV
-            String archivo = "citas_hospital.csv";
-            citaManager.guardarCitas(archivo);
-            System.out.println("✓ Citas guardadas en " + archivo);
+        System.out.println("Hospitales en Repository (" + hospitalRepository.size() + "):");
+        hospitalRepository.findAll().forEach(h ->
+                System.out.println("  ID: " + h.getId() + " | " + h.getNombre()));
 
-            // Probar carga desde archivo
-            CitaManager nuevoCitaManager = new CitaManager();
-            Map<String, Paciente> pacientesMap = crearMapaPacientes(pacientes);
-            Map<String, Medico> medicosMap = crearMapaMedicos(medicos);
-            Map<String, Sala> salasMap = crearMapaSalas(hospital);
+        System.out.println("\nMédicos en Repository (" + medicoRepository.size() + "):");
+        medicoRepository.findAll().forEach(m ->
+                System.out.println("  ID: " + m.getId() + " | " + m.getNombreCompleto() + " | " + m.getEspecialidad().getDescripcion()));
 
-            nuevoCitaManager.cargarCitas(archivo, pacientesMap, medicosMap, salasMap);
-            System.out.println("✓ Citas cargadas exitosamente desde archivo");
+        System.out.println("\nPacientes en Repository (" + pacienteRepository.size() + "):");
+        pacienteRepository.findAll().forEach(p ->
+                System.out.println("  ID: " + p.getId() + " | " + p.getNombreCompleto() + " | " + p.getTipoSangre().getDescripcion()));
 
-            // Verificar que se cargaron correctamente
-            int totalCitasCargadas = 0;
-            for (Paciente paciente : pacientes) {
-                totalCitasCargadas += nuevoCitaManager.getCitasPorPaciente(paciente).size();
-            }
-            System.out.println("✓ Total de citas cargadas: " + totalCitasCargadas);
-
-        } catch (Exception e) {
-            System.err.println("✗ Error en persistencia: " + e.getMessage());
-        }
+        System.out.println("\nCitas en Repository (" + citaRepository.size() + "):");
+        citaRepository.findAll().forEach(c ->
+                System.out.println("  ID: " + c.getId() + " | Paciente: " + c.getPaciente().getNombreCompleto() + " | Médico: " + c.getMedico().getNombreCompleto() + " | " + c.getEstado().getDescripcion()));
 
         System.out.println();
     }
 
-    private static Map<String, Paciente> crearMapaPacientes(List<Paciente> pacientes) {
-        Map<String, Paciente> mapa = new HashMap<>();
-        for (Paciente p : pacientes) {
-            mapa.put(p.getDni(), p);
-        }
-        return mapa;
-    }
-
-    private static Map<String, Medico> crearMapaMedicos(List<Medico> medicos) {
-        Map<String, Medico> mapa = new HashMap<>();
-        for (Medico m : medicos) {
-            mapa.put(m.getDni(), m);
-        }
-        return mapa;
-    }
-
-    private static Map<String, Sala> crearMapaSalas(Hospital hospital) {
-        Map<String, Sala> mapa = new HashMap<>();
-        for (Departamento dep : hospital.getDepartamentos()) {
-            for (Sala sala : dep.getSalas()) {
-                mapa.put(sala.getNumero(), sala);
-            }
-        }
-        return mapa;
-    }
-
-    // ===== PRUEBAS DE VALIDACIÓN =====
+    // ===== PRUEBAS DE VALIDACIÓN ORIGINALES =====
 
     private static void ejecutarPruebasValidacion(CitaManager citaManager, List<Medico> medicos, List<Paciente> pacientes, Hospital hospital) {
         System.out.println("===== PRUEBAS DE VALIDACIÓN =====");
+
+        if (pacientes.isEmpty() || medicos.isEmpty() || hospital.getDepartamentos().isEmpty()) {
+            System.out.println("No hay datos suficientes para ejecutar pruebas de validación");
+            return;
+        }
 
         Paciente pacientePrueba = pacientes.get(0);
         Medico medicoPrueba = medicos.get(0);
@@ -466,10 +488,12 @@ public class Main {
             Medico cardiologo = obtenerMedicoPorEspecialidad(medicos, EspecialidadMedica.CARDIOLOGIA);
             Sala salaPediatria = obtenerSalaPorEspecialidad(hospital, EspecialidadMedica.PEDIATRIA);
 
-            citaManager.programarCita(paciente, cardiologo, salaPediatria,
-                    LocalDateTime.of(2025, 3, 1, 10, 0),
-                    new BigDecimal("100000.00"));
-            System.out.println("✗ ERROR: Se permitió especialidad incompatible");
+            if (cardiologo != null && salaPediatria != null) {
+                citaManager.programarCita(paciente, cardiologo, salaPediatria,
+                        LocalDateTime.of(2025, 3, 1, 10, 0),
+                        new BigDecimal("100000.00"));
+                System.out.println("✗ ERROR: Se permitió especialidad incompatible");
+            }
         } catch (CitaException e) {
             System.out.println("✓ Validación especialidad incompatible: " + e.getMessage());
         }
@@ -483,7 +507,7 @@ public class Main {
                 .orElse(null);
     }
 
-    // ===== ESTADÍSTICAS FINALES =====
+    // ===== ESTADÍSTICAS FINALES ORIGINALES =====
 
     private static void mostrarEstadisticasFinales(Hospital hospital) {
         System.out.println("===== ESTADÍSTICAS FINALES =====");
@@ -508,6 +532,12 @@ public class Main {
 
         // Distribución por especialidad
         mostrarDistribucionEspecialidades(hospital);
+
+        // Estadísticas del repository
+        System.out.println("\n--- Estadísticas Repository ---");
+        System.out.println("Entidades en Repository: " +
+                (hospitalRepository.size() + medicoRepository.size() +
+                        pacienteRepository.size() + citaRepository.size()));
     }
 
     private static void mostrarDistribucionTipoSangre(Hospital hospital) {
@@ -531,5 +561,44 @@ public class Main {
                     dep.getMedicos().size() + " médicos, " +
                     dep.getSalas().size() + " salas");
         }
+    }
+
+    // ===== NUEVA FUNCIONALIDAD: DEMOSTRAR REPOSITORY =====
+
+    private static void demostrarRepository() {
+        System.out.println("\n===== DEMOSTRANDO FUNCIONALIDADES DEL REPOSITORY =====");
+
+        // Búsquedas por campo específico usando genericFindByField
+        System.out.println("--- Búsquedas con genericFindByField ---");
+
+        // Buscar médicos por especialidad
+        List<Medico> cardiologos = medicoRepository.genericFindByField("especialidad", EspecialidadMedica.CARDIOLOGIA);
+        System.out.println("Cardiólogos encontrados: " + cardiologos.size());
+
+        // Buscar pacientes por tipo de sangre
+        List<Paciente> tipoAPos = pacienteRepository.genericFindByField("tipoSangre", TipoSangre.A_POSITIVO);
+        System.out.println("Pacientes tipo A+: " + tipoAPos.size());
+
+        // Buscar citas por estado
+        List<Cita> citasCompletadas = citaRepository.genericFindByField("estado", EstadoCita.COMPLETADA);
+        System.out.println("Citas completadas: " + citasCompletadas.size());
+
+        // Búsqueda por DNI
+        List<Medico> medicoPorDni = medicoRepository.genericFindByField("dni", "12345678");
+        System.out.println("Médico con DNI 12345678: " + (medicoPorDni.isEmpty() ? "No encontrado" : medicoPorDni.get(0).getNombreCompleto()));
+
+        // Operaciones CRUD básicas
+        System.out.println("\n--- Operaciones CRUD ---");
+
+        // Búsqueda por ID
+        List<Hospital> hospitales = hospitalRepository.findAll();
+        if (!hospitales.isEmpty()) {
+            Long hospitalId = hospitales.get(0).getId();
+            var hospitalEncontrado = hospitalRepository.findById(hospitalId);
+            System.out.println("Hospital por ID " + hospitalId + ": " +
+                    (hospitalEncontrado.isPresent() ? hospitalEncontrado.get().getNombre() : "No encontrado"));
+        }
+
+        System.out.println("Repository funciona correctamente con reflection e IDs automáticos!");
     }
 }

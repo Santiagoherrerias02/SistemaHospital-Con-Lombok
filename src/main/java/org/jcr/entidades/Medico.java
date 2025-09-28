@@ -17,6 +17,8 @@ import java.util.Objects;
 @SuperBuilder
 
 public class Medico extends Persona implements Serializable {
+    @Setter
+    private Long id;
     private final Matricula matricula;
     private final EspecialidadMedica especialidad;
 

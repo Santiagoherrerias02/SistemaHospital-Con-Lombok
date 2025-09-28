@@ -2,6 +2,7 @@ package org.jcr.entidades;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
@@ -15,6 +16,8 @@ import java.util.Objects;
 @Builder
 
 public class Hospital implements Serializable {
+    @Setter
+    private Long id;
     private final String nombre;
     private final String direccion;
     private final String telefono;

@@ -19,6 +19,8 @@ import java.util.Objects;
 @Builder
 
 public class Cita implements Serializable {
+    @Setter
+    private Long id;
     private final Paciente paciente;
     private final Medico medico;
     private final Sala sala;
