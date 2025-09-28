@@ -13,7 +13,6 @@ import java.util.Objects;
 @ToString
 @EqualsAndHashCode(of = {"dni"}) // Solo DNI para identificación única
 
-
 public abstract class Persona implements Serializable {
     protected final String nombre;
     protected final String apellido;

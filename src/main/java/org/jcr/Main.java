@@ -13,9 +13,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-
 public class Main {
     public static void main(String[] args) {
         System.out.println("===== SISTEMA DE GESTIÓN HOSPITALARIA =====\n");
