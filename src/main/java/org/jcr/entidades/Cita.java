@@ -1,12 +1,19 @@
 package org.jcr.entidades;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import org.jcr.enums.EstadoCita;
 import org.jcr.excepciones.CitaException;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
+
+@Getter // Solo getters automáticos para campos final
+@ToString // ToString automático está bien
 
 public class Cita implements Serializable {
     private final Paciente paciente;
@@ -14,9 +21,14 @@ public class Cita implements Serializable {
     private final Sala sala;
     private final LocalDateTime fechaHora;
     private final BigDecimal costo;
+
+    @Setter // Solo estos 2 campos necesitan setters
     private EstadoCita estado;
+
+    @Setter
     private String observaciones;
 
+    // CONSTRUCTOR CRÍTICO - NO CAMBIAR NI UNA LÍNEA
     public Cita(Paciente paciente, Medico medico, Sala sala, LocalDateTime fechaHora, BigDecimal costo) {
         this.paciente = Objects.requireNonNull(paciente, "El paciente no puede ser nulo");
         this.medico = Objects.requireNonNull(medico, "El médico no puede ser nulo");
@@ -27,54 +39,7 @@ public class Cita implements Serializable {
         this.observaciones = "";
     }
 
-    public Paciente getPaciente() {
-        return paciente;
-    }
-
-    public Medico getMedico() {
-        return medico;
-    }
-
-    public Sala getSala() {
-        return sala;
-    }
-
-    public LocalDateTime getFechaHora() {
-        return fechaHora;
-    }
-
-    public BigDecimal getCosto() {
-        return costo;
-    }
-
-    public EstadoCita getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoCita estado) {
-        this.estado = Objects.requireNonNull(estado, "El estado no puede ser nulo");
-    }
-
-    public String getObservaciones() {
-        return observaciones;
-    }
-
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones != null ? observaciones : "";
-    }
-
-    @Override
-    public String toString() {
-        return "Cita{" +
-                "paciente=" + paciente.getNombreCompleto() +
-                ", medico=" + medico.getNombreCompleto() +
-                ", sala=" + sala.getNumero() +
-                ", fechaHora=" + fechaHora +
-                ", estado=" + estado.getDescripcion() +
-                ", costo=" + costo +
-                '}';
-    }
-
+    // MÉTODOS CSV CRÍTICOS - NO TOCAR ABSOLUTAMENTE NADA
     public String toCsvString() {
         return String.format("%s,%s,%s,%s,%s,%s,%s",
                 paciente.getDni(),
@@ -122,5 +87,14 @@ public class Cita implements Serializable {
         cita.setObservaciones(observaciones);
 
         return cita;
+    }
+
+    // SETTERS PERSONALIZADOS CON VALIDACIÓN - MANTENER
+    public void setEstado(EstadoCita estado) {
+        this.estado = Objects.requireNonNull(estado, "El estado no puede ser nulo");
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones != null ? observaciones : "";
     }
 }

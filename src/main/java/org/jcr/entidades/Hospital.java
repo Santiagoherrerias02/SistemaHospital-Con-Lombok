@@ -1,9 +1,20 @@
 package org.jcr.entidades;
+
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+@Getter
+@ToString(exclude = {"departamentos", "pacientes"}) // Evitar recursión
+@EqualsAndHashCode(of = {"nombre", "direccion"})
+@Builder
 
 public class Hospital implements Serializable {
     private final String nombre;
@@ -12,24 +23,14 @@ public class Hospital implements Serializable {
     private final List<Departamento> departamentos = new ArrayList<>();
     private final List<Paciente> pacientes = new ArrayList<>();
 
+    // Constructor personalizado MANTENER validaciones
     public Hospital(String nombre, String direccion, String telefono) {
         this.nombre = validarString(nombre, "El nombre del hospital no puede ser nulo ni vacío");
         this.direccion = validarString(direccion, "La dirección no puede ser nula ni vacía");
         this.telefono = validarString(telefono, "El teléfono no puede ser nulo ni vacío");
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getDireccion() {
-        return direccion;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
+    // MÉTODOS DE NEGOCIO CRÍTICOS - NO TOCAR
     public void agregarDepartamento(Departamento departamento) {
         if (departamento != null && !departamentos.contains(departamento)) {
             departamentos.add(departamento);
@@ -44,6 +45,7 @@ public class Hospital implements Serializable {
         }
     }
 
+    // GETTERS INMUTABLES PERSONALIZADOS
     public List<Departamento> getDepartamentos() {
         return Collections.unmodifiableList(departamentos);
     }
@@ -52,6 +54,7 @@ public class Hospital implements Serializable {
         return Collections.unmodifiableList(pacientes);
     }
 
+    // MÉTODOS INTERNOS CRÍTICOS - NO TOCAR
     List<Departamento> getInternalDepartamentos() {
         return departamentos;
     }
@@ -60,15 +63,7 @@ public class Hospital implements Serializable {
         return pacientes;
     }
 
-    @Override
-    public String toString() {
-        return "Hospital{" +
-                "nombre='" + nombre + '\'' +
-                ", direccion='" + direccion + '\'' +
-                ", telefono='" + telefono + '\'' +
-                '}';
-    }
-
+    // VALIDACIÓN - NO TOCAR
     private String validarString(String valor, String mensajeError) {
         Objects.requireNonNull(valor, mensajeError);
         if (valor.trim().isEmpty()) {
