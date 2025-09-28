@@ -2,14 +2,12 @@ package org.jcr.entidades;
 
 import lombok.Getter;
 import lombok.ToString;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Getter
 @ToString
-@EqualsAndHashCode
 
 public class Matricula implements Serializable {
     private final String numero;

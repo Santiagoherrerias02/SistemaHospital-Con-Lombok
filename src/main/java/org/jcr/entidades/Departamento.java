@@ -1,6 +1,5 @@
 package org.jcr.entidades;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,7 +13,6 @@ import java.util.Objects;
 
 @Getter
 @ToString(exclude = {"hospital", "medicos", "salas"}) // Evitar recursión total
-@EqualsAndHashCode(of = {"nombre", "especialidad"})
 
 public class Departamento implements Serializable {
     private final String nombre;

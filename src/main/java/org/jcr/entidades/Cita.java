@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Getter // Solo getters automáticos para campos final
-@ToString // ToString automático está bien
+@ToString(exclude = {"paciente","medico","sala"}) // ToString automático está bien
 
 public class Cita implements Serializable {
     private final Paciente paciente;

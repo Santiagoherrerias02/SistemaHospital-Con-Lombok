@@ -1,5 +1,11 @@
 package org.jcr.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
+
 public enum EstadoCita {
     PROGRAMADA("Programada"),
     EN_CURSO("En Curso"),
@@ -8,12 +14,4 @@ public enum EstadoCita {
     NO_ASISTIO("No Asistió");
 
     private final String descripcion;
-
-    EstadoCita(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
 }
