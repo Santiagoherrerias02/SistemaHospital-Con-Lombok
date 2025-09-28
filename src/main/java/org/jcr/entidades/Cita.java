@@ -1,11 +1,13 @@
 package org.jcr.entidades;
 
+import org.jcr.enums.EstadoCita;
+import org.jcr.excepciones.CitaException;
+
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import org.jcr.enums.EstadoCita;
-import org.jcr.excepciones.CitaException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,6 +16,7 @@ import java.util.Objects;
 
 @Getter // Solo getters automáticos para campos final
 @ToString(exclude = {"paciente","medico","sala"}) // ToString automático está bien
+@Builder
 
 public class Cita implements Serializable {
     private final Paciente paciente;
@@ -29,14 +32,63 @@ public class Cita implements Serializable {
     private String observaciones;
 
     // CONSTRUCTOR CRÍTICO - NO CAMBIAR NI UNA LÍNEA
-    public Cita(Paciente paciente, Medico medico, Sala sala, LocalDateTime fechaHora, BigDecimal costo) {
-        this.paciente = Objects.requireNonNull(paciente, "El paciente no puede ser nulo");
-        this.medico = Objects.requireNonNull(medico, "El médico no puede ser nulo");
-        this.sala = Objects.requireNonNull(sala, "La sala no puede ser nula");
-        this.fechaHora = Objects.requireNonNull(fechaHora, "La fecha y hora no pueden ser nulas");
-        this.costo = Objects.requireNonNull(costo, "El costo no puede ser nulo");
-        this.estado = EstadoCita.PROGRAMADA;
-        this.observaciones = "";
+    private Cita(CitaBuilder builder) {
+        this.paciente = Objects.requireNonNull(builder.paciente, "El paciente no puede ser nulo");
+        this.medico = Objects.requireNonNull(builder.medico, "El médico no puede ser nulo");
+        this.sala = Objects.requireNonNull(builder.sala, "La sala no puede ser nula");
+        this.fechaHora = Objects.requireNonNull(builder.fechaHora, "La fecha y hora no pueden ser nulas");
+        this.costo = Objects.requireNonNull(builder.costo, "El costo no puede ser nulo");
+        this.estado = builder.estado != null ? builder.estado : EstadoCita.PROGRAMADA;
+        this.observaciones = builder.observaciones != null ? builder.observaciones : "";
+    }
+
+    public static class CitaBuilder {
+        private Paciente paciente;
+        private Medico medico;
+        private Sala sala;
+        private LocalDateTime fechaHora;
+        private BigDecimal costo;
+        private EstadoCita estado;
+        private String observaciones;
+
+        public CitaBuilder paciente(Paciente paciente) {
+            this.paciente = paciente;
+            return this;
+        }
+
+        public CitaBuilder medico(Medico medico) {
+            this.medico = medico;
+            return this;
+        }
+
+        public CitaBuilder sala(Sala sala) {
+            this.sala = sala;
+            return this;
+        }
+
+        public CitaBuilder fechaHora(LocalDateTime fechaHora) {
+            this.fechaHora = fechaHora;
+            return this;
+        }
+
+        public CitaBuilder costo(BigDecimal costo) {
+            this.costo = costo;
+            return this;
+        }
+
+        public CitaBuilder estado(EstadoCita estado) {
+            this.estado = estado;
+            return this;
+        }
+
+        public CitaBuilder observaciones(String observaciones) {
+            this.observaciones = observaciones;
+            return this;
+        }
+
+        public Cita build() {
+            return new Cita(this);
+        }
     }
 
     // MÉTODOS CSV CRÍTICOS - NO TOCAR ABSOLUTAMENTE NADA
@@ -82,11 +134,15 @@ public class Cita implements Serializable {
             throw new CitaException("Sala no encontrada: " + numeroSala);
         }
 
-        Cita cita = new Cita(paciente, medico, sala, fechaHora, costo);
-        cita.setEstado(estado);
-        cita.setObservaciones(observaciones);
-
-        return cita;
+        return Cita.builder()
+                .paciente(paciente)
+                .medico(medico)
+                .sala(sala)
+                .fechaHora(fechaHora)
+                .costo(costo)
+                .estado(estado)
+                .observaciones(observaciones)
+                .build();
     }
 
     // SETTERS PERSONALIZADOS CON VALIDACIÓN - MANTENER

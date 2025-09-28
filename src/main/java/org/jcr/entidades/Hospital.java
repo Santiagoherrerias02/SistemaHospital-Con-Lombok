@@ -1,5 +1,6 @@
 package org.jcr.entidades;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -11,6 +12,7 @@ import java.util.Objects;
 
 @Getter
 @ToString(exclude = {"departamentos", "pacientes"}) // Evitar recursión
+@Builder
 
 public class Hospital implements Serializable {
     private final String nombre;
@@ -20,10 +22,35 @@ public class Hospital implements Serializable {
     private final List<Paciente> pacientes = new ArrayList<>();
 
     // Constructor personalizado MANTENER validaciones
-    public Hospital(String nombre, String direccion, String telefono) {
-        this.nombre = validarString(nombre, "El nombre del hospital no puede ser nulo ni vacío");
-        this.direccion = validarString(direccion, "La dirección no puede ser nula ni vacía");
-        this.telefono = validarString(telefono, "El teléfono no puede ser nulo ni vacío");
+    private Hospital(HospitalBuilder builder) {
+        this.nombre = validarString(builder.nombre, "El nombre del hospital no puede ser nulo ni vacío");
+        this.direccion = validarString(builder.direccion, "La dirección no puede ser nula ni vacía");
+        this.telefono = validarString(builder.telefono, "El teléfono no puede ser nulo ni vacío");
+    }
+
+    public static class HospitalBuilder {
+        private String nombre;
+        private String direccion;
+        private String telefono;
+
+        public HospitalBuilder nombre(String nombre) {
+            this.nombre = nombre;
+            return this;
+        }
+
+        public HospitalBuilder direccion(String direccion) {
+            this.direccion = direccion;
+            return this;
+        }
+
+        public HospitalBuilder telefono(String telefono) {
+            this.telefono = telefono;
+            return this;
+        }
+
+        public Hospital build() {
+            return new Hospital(this);
+        }
     }
 
     // MÉTODOS DE NEGOCIO CRÍTICOS - NO TOCAR

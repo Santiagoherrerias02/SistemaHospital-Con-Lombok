@@ -57,12 +57,12 @@ public class Main {
         System.out.println("Inicializando hospital y departamentos...");
 
         // Crear hospital principal
-        Hospital hospital = new Hospital("Hospital Central", "Av. Libertador 1234", "011-4567-8901");
+        Hospital hospital = Hospital.builder().nombre("Hospital Central").direccion("Av. Libertador 1234").telefono("011-4567-8901").build();
 
         // Crear departamentos especializados
-        Departamento cardiologia = new Departamento("Cardiología", EspecialidadMedica.CARDIOLOGIA);
-        Departamento pediatria = new Departamento("Pediatría", EspecialidadMedica.PEDIATRIA);
-        Departamento traumatologia = new Departamento("Traumatología", EspecialidadMedica.TRAUMATOLOGIA);
+        Departamento cardiologia = Departamento.builder().nombre("Cardiología").especialidad(EspecialidadMedica.CARDIOLOGIA).build();
+        Departamento pediatria = Departamento.builder().nombre("Pediatría").especialidad(EspecialidadMedica.PEDIATRIA).build();
+        Departamento traumatologia = Departamento.builder().nombre("Traumatología").especialidad(EspecialidadMedica.TRAUMATOLOGIA).build();
 
         // Asignar departamentos al hospital
         hospital.agregarDepartamento(cardiologia);
@@ -94,17 +94,36 @@ public class Main {
         List<Medico> medicos = new ArrayList<>();
 
         // Crear médicos especialistas
-        Medico cardiologo = new Medico("Carlos", "González", "12345678",
-                LocalDate.of(1975, 5, 15), TipoSangre.A_POSITIVO,
-                "MP-12345", EspecialidadMedica.CARDIOLOGIA);
+        Medico cardiologo = Medico.builder()
+                .nombre("Carlos")
+                .apellido("González")
+                .dni("12345678")
+                .fechaNacimiento(LocalDate.of(1975, 5, 15))
+                .tipoSangre(TipoSangre.A_POSITIVO)
+                .numeroMatricula("MP-12345")
+                .especialidad(EspecialidadMedica.CARDIOLOGIA)
+                .build();
 
-        Medico pediatra = new Medico("Ana", "Martínez", "23456789",
-                LocalDate.of(1980, 8, 22), TipoSangre.O_NEGATIVO,
-                "MP-23456", EspecialidadMedica.PEDIATRIA);
+        Medico pediatra = Medico.builder()
+                .nombre("Ana")
+                .apellido("Martínez")
+                .dni("23456789")
+                .fechaNacimiento(LocalDate.of(1980, 8, 22))
+                .tipoSangre(TipoSangre.O_NEGATIVO)
+                .numeroMatricula("MP-23456")
+                .especialidad(EspecialidadMedica.PEDIATRIA)
+                .build();
 
-        Medico traumatologo = new Medico("Luis", "Rodríguez", "34567890",
-                LocalDate.of(1978, 3, 10), TipoSangre.B_POSITIVO,
-                "MP-34567", EspecialidadMedica.TRAUMATOLOGIA);
+        Medico traumatologo = Medico.builder()
+                .nombre("Luis")
+                .apellido("Rodríguez")
+                .dni("34567890")
+                .fechaNacimiento(LocalDate.of(1978, 3, 10))
+                .tipoSangre(TipoSangre.B_POSITIVO)
+                .numeroMatricula("MP-34567")
+                .especialidad(EspecialidadMedica.TRAUMATOLOGIA)
+                .build();
+
 
         // Asignar médicos a sus departamentos correspondientes
         for (Departamento dep : hospital.getDepartamentos()) {
@@ -134,17 +153,36 @@ public class Main {
         List<Paciente> pacientes = new ArrayList<>();
 
         // Crear pacientes con diferentes perfiles
-        Paciente pacienteCardiaco = new Paciente("María", "López", "11111111",
-                LocalDate.of(1985, 12, 5), TipoSangre.A_POSITIVO,
-                "011-1111-1111", "Calle Falsa 123");
+        Paciente pacienteCardiaco = Paciente.builder()
+                .nombre("María")
+                .apellido("López")
+                .dni("11111111")
+                .fechaNacimiento(LocalDate.of(1985, 12, 5))
+                .tipoSangre(TipoSangre.A_POSITIVO)
+                .telefono("011-1111-1111")
+                .direccion("Calle Falsa 123")
+                .build();
 
-        Paciente pacientePediatrico = new Paciente("Pedro", "García", "22222222",
-                LocalDate.of(2010, 6, 15), TipoSangre.O_POSITIVO,
-                "011-2222-2222", "Av. Siempreviva 456");
+        Paciente pacientePediatrico = Paciente.builder()
+                .nombre("Pedro")
+                .apellido("García")
+                .dni("22222222")
+                .fechaNacimiento(LocalDate.of(2010, 6, 15))
+                .tipoSangre(TipoSangre.O_POSITIVO)
+                .telefono("011-2222-2222")
+                .direccion("Av. Siempreviva 456")
+                .build();
 
-        Paciente pacienteTraumatologico = new Paciente("Elena", "Fernández", "33333333",
-                LocalDate.of(1992, 9, 28), TipoSangre.AB_NEGATIVO,
-                "011-3333-3333", "Belgrano 789");
+        Paciente pacienteTraumatologico = Paciente.builder()
+                .nombre("Elena")
+                .apellido("Fernández")
+                .dni("33333333")
+                .fechaNacimiento(LocalDate.of(1992, 9, 28))
+                .tipoSangre(TipoSangre.AB_NEGATIVO)
+                .telefono("011-3333-3333")
+                .direccion("Belgrano 789")
+                .build();
+
 
         // Registrar pacientes en el hospital
         hospital.agregarPaciente(pacienteCardiaco);

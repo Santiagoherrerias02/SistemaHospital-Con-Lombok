@@ -1,5 +1,6 @@
 package org.jcr.entidades;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -11,6 +12,7 @@ import java.util.Objects;
 
 @Getter
 @ToString(exclude = {"paciente"})// Evitar referencia circular
+@Builder
 
 public class HistoriaClinica implements Serializable {
     private final String numeroHistoria;
@@ -20,13 +22,32 @@ public class HistoriaClinica implements Serializable {
     private final List<String> tratamientos = new ArrayList<>();
     private final List<String> alergias = new ArrayList<>(); // Constructor CRÍTICO - genera numeroHistoria automáticamente
 
-    public HistoriaClinica(Paciente paciente) {
-        this.paciente = Objects.requireNonNull(paciente, "El paciente no puede ser nulo");
-        this.fechaCreacion = LocalDateTime.now();
+    private HistoriaClinica(HistoriaClinicaBuilder builder) {
+        this.paciente = Objects.requireNonNull(builder.paciente, "El paciente no puede ser nulo");
+        this.fechaCreacion = builder.fechaCreacion != null ? builder.fechaCreacion : LocalDateTime.now();
         this.numeroHistoria = generarNumeroHistoria();
     }
-    // MÉTODOS DE NEGOCIO - NO TOCAR
 
+    public static class HistoriaClinicaBuilder {
+        private Paciente paciente;
+        private LocalDateTime fechaCreacion;
+
+        public HistoriaClinicaBuilder paciente(Paciente paciente) {
+            this.paciente = paciente;
+            return this;
+        }
+
+        public HistoriaClinicaBuilder fechaCreacion(LocalDateTime fechaCreacion) {
+            this.fechaCreacion = fechaCreacion;
+            return this;
+        }
+
+        public HistoriaClinica build() {
+            return new HistoriaClinica(this);
+        }
+    }
+
+    // MÉTODOS DE NEGOCIO - NO TOCAR
     private String generarNumeroHistoria() {
         return "HC-" + paciente.getDni() + "-" + fechaCreacion.getYear();
     }

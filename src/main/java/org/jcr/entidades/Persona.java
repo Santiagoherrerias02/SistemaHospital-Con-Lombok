@@ -1,9 +1,11 @@
 package org.jcr.entidades;
+import org.jcr.enums.TipoSangre;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.jcr.enums.TipoSangre;
+import lombok.experimental.SuperBuilder;
+
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -12,6 +14,7 @@ import java.util.Objects;
 @Getter
 @ToString
 @EqualsAndHashCode(of = {"dni"}) // Solo DNI para identificación única
+@SuperBuilder
 
 public abstract class Persona implements Serializable {
     protected final String nombre;
@@ -20,12 +23,12 @@ public abstract class Persona implements Serializable {
     protected final LocalDate fechaNacimiento;
     protected final TipoSangre tipoSangre;
 
-    public Persona(String nombre, String apellido, String dni, LocalDate fechaNacimiento, TipoSangre tipoSangre) {
-        this.nombre = validarString(nombre, "El nombre no puede ser nulo ni vacío");
-        this.apellido = validarString(apellido, "El apellido no puede ser nulo ni vacío");
-        this.dni = validarDni(dni);
-        this.fechaNacimiento = Objects.requireNonNull(fechaNacimiento, "La fecha de nacimiento no puede ser nula");
-        this.tipoSangre = Objects.requireNonNull(tipoSangre, "El tipo de sangre no puede ser nulo");
+    protected Persona(PersonaBuilder<?, ?> builder) {
+        this.nombre = validarString(builder.nombre, "El nombre no puede ser nulo ni vacío");
+        this.apellido = validarString(builder.apellido, "El apellido no puede ser nulo ni vacío");
+        this.dni = validarDni(builder.dni);
+        this.fechaNacimiento = Objects.requireNonNull(builder.fechaNacimiento, "La fecha de nacimiento no puede ser nula");
+        this.tipoSangre = Objects.requireNonNull(builder.tipoSangre, "El tipo de sangre no puede ser nulo");
     }
 
     // MÉTODOS DE NEGOCIO - NO TOCAR

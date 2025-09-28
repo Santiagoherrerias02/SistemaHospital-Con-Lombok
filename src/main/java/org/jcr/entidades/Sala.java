@@ -1,17 +1,20 @@
 package org.jcr.entidades;
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 @Getter
 @ToString(of = {"numero", "tipo"}) // Evitar referencia circular con departamento
 @EqualsAndHashCode(of = {"numero"}) // Solo número identifica sala
+@Builder
 
 public class Sala implements Serializable {
     private final String numero;
@@ -19,15 +22,44 @@ public class Sala implements Serializable {
     private final Departamento departamento;
     private final List<Cita> citas = new ArrayList<>(); // Constructor personalizado MANTENER
 
-    public Sala(String numero, String tipo, Departamento departamento) {
-        this.numero = validarString(numero, "El número de sala no puede ser nulo ni vacío");
-        this.tipo = validarString(tipo, "El tipo de sala no puede ser nulo ni vacío");
-        this.departamento = Objects.requireNonNull(departamento, "El departamento no puede ser nulo");
+    private Sala(SalaBuilder builder) {
+        this.numero = validarString(builder.numero, "El número de sala no puede ser nulo ni vacío");
+        this.tipo = validarString(builder.tipo, "El tipo de sala no puede ser nulo ni vacío");
+        this.departamento = Objects.requireNonNull(builder.departamento, "El departamento no puede ser nulo");
+    }
+
+    public static class SalaBuilder {
+        private String numero;
+        private String tipo;
+        private Departamento departamento;
+
+        public SalaBuilder numero(String numero) {
+            this.numero = numero;
+            return this;
+        }
+
+        public SalaBuilder tipo(String tipo) {
+            this.tipo = tipo;
+            return this;
+        }
+
+        public SalaBuilder departamento(Departamento departamento) {
+            this.departamento = departamento;
+            return this;
+        }
+
+        public Sala build() {
+            return new Sala(this);
+        }
     }
 
     // MÉTODO DE NEGOCIO - NO TOCAR
     public void addCita(Cita cita) {
         this.citas.add(cita);
+    }
+
+    public List<Cita> getCitas() {
+        return Collections.unmodifiableList(new ArrayList<>(citas));
     }
 
     // VALIDACIÓN - NO TOCAR

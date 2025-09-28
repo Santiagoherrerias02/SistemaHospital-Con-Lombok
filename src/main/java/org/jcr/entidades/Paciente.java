@@ -4,10 +4,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.jcr.enums.TipoSangre;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +15,7 @@ import java.util.Objects;
 @Getter
 @EqualsAndHashCode(callSuper = true) // Solo hereda de Persona (DNI)
 @ToString(callSuper = true, of = {"telefono"})
+@SuperBuilder
 
 public class Paciente extends Persona implements Serializable {
     private final HistoriaClinica historiaClinica;
@@ -26,11 +26,40 @@ public class Paciente extends Persona implements Serializable {
     private Hospital hospital;
     private final List<Cita> citas = new ArrayList<>(); // Constructor personalizado - crea HistoriaClinica automáticamente
 
-    public Paciente(String nombre, String apellido, String dni, LocalDate fechaNacimiento, TipoSangre tipoSangre, String telefono, String direccion) {
-        super(nombre, apellido, dni, fechaNacimiento, tipoSangre);
-        this.telefono = validarString(telefono, "El teléfono no puede ser nulo ni vacío");
-        this.direccion = validarString(direccion, "La dirección no puede ser nula ni vacía");
-        this.historiaClinica = new HistoriaClinica(this); // CRÍTICO
+    protected Paciente(PacienteBuilder<?, ?> builder) {
+        super(builder);
+        this.telefono = validarString(builder.telefono, "El teléfono no puede ser nulo ni vacío");
+        this.direccion = validarString(builder.direccion, "La dirección no puede ser nula ni vacía");
+        this.historiaClinica = HistoriaClinica.builder()
+                .paciente(this)
+                .build();
+    }
+
+    public static abstract class PacienteBuilder<C extends Paciente, B extends PacienteBuilder<C, B>> extends PersonaBuilder<C, B> {
+        private String telefono;
+        private String direccion;
+
+        public B telefono(String telefono) {
+            this.telefono = telefono;
+            return self();
+        }
+
+        public B direccion(String direccion) {
+            this.direccion = direccion;
+            return self();
+        }
+    }
+
+    public void setHospital(Hospital hospital) {
+        if (this.hospital != hospital) {
+            if (this.hospital != null) {
+                this.hospital.getInternalPacientes().remove(this);
+            }
+            this.hospital = hospital;
+            if (hospital != null) {
+                hospital.getInternalPacientes().add(this);
+            }
+        }
     }
 
     // MÉTODOS DE NEGOCIO - NO TOCAR

@@ -1,11 +1,11 @@
 package org.jcr.entidades;
 
-import lombok.*;
-
 import org.jcr.enums.EspecialidadMedica;
-import org.jcr.enums.TipoSangre;
+
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.Objects;
 @Getter
 @EqualsAndHashCode(callSuper = true, of = {"matricula"}) // Incluye Persona + matricula
 @ToString(callSuper = true, of = {"matricula", "especialidad"})
+@SuperBuilder
 
 public class Medico extends Persona implements Serializable {
     private final Matricula matricula;
@@ -23,10 +24,25 @@ public class Medico extends Persona implements Serializable {
     private Departamento departamento;
     private final List<Cita> citas = new ArrayList<>(); // Constructor personalizado MANTENER EXACTO
 
-    public Medico(String nombre, String apellido, String dni, LocalDate fechaNacimiento, TipoSangre tipoSangre, String numeroMatricula, EspecialidadMedica especialidad) {
-        super(nombre, apellido, dni, fechaNacimiento, tipoSangre);
-        this.matricula = new Matricula(numeroMatricula);
-        this.especialidad = Objects.requireNonNull(especialidad, "La especialidad no puede ser nula");
+    protected Medico(MedicoBuilder<?, ?> builder) {
+        super(builder);
+        this.matricula = new Matricula(builder.numeroMatricula);
+        this.especialidad = Objects.requireNonNull(builder.especialidad, "La especialidad no puede ser nula");
+    }
+
+    public static abstract class MedicoBuilder<C extends Medico, B extends MedicoBuilder<C, B>> extends PersonaBuilder<C, B> {
+        private String numeroMatricula;
+        private EspecialidadMedica especialidad;
+
+        public B numeroMatricula(String numeroMatricula) {
+            this.numeroMatricula = numeroMatricula;
+            return self();
+        }
+
+        public B especialidad(EspecialidadMedica especialidad) {
+            this.especialidad = especialidad;
+            return self();
+        }
     }
 
     // MÉTODOS DE NEGOCIO - NO TOCAR
