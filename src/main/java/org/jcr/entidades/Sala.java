@@ -20,7 +20,7 @@ public class Sala implements Serializable {
     private final String numero;
     private final String tipo;
     private final Departamento departamento;
-    private final List<Cita> citas = new ArrayList<>(); // Constructor personalizado MANTENER
+    private final List<Cita> citas = new ArrayList<>();
 
     private Sala(SalaBuilder builder) {
         this.numero = validarString(builder.numero, "El número de sala no puede ser nulo ni vacío");
@@ -53,7 +53,7 @@ public class Sala implements Serializable {
         }
     }
 
-    // MÉTODO DE NEGOCIO - NO TOCAR
+    // METODO DE NEGOCIO
     public void addCita(Cita cita) {
         this.citas.add(cita);
     }
@@ -62,7 +62,7 @@ public class Sala implements Serializable {
         return Collections.unmodifiableList(new ArrayList<>(citas));
     }
 
-    // VALIDACIÓN - NO TOCAR
+    // VALIDACIÓN
     private String validarString(String valor, String mensajeError) {
         Objects.requireNonNull(valor, mensajeError);
         if (valor.trim().isEmpty()) {

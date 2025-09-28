@@ -24,7 +24,7 @@ public class Paciente extends Persona implements Serializable {
 
     @Setter // Solo hospital es mutable
     private Hospital hospital;
-    private final List<Cita> citas = new ArrayList<>(); // Constructor personalizado - crea HistoriaClinica automáticamente
+    private final List<Cita> citas = new ArrayList<>(); // Crea HistoriaClinica automáticamente
 
     protected Paciente(PacienteBuilder<?, ?> builder) {
         super(builder);
@@ -62,7 +62,7 @@ public class Paciente extends Persona implements Serializable {
         }
     }
 
-    // MÉTODOS DE NEGOCIO - NO TOCAR
+    // MÉTODOS DE NEGOCIO
     public void addCita(Cita cita) {
         this.citas.add(cita);
     }
@@ -71,7 +71,7 @@ public class Paciente extends Persona implements Serializable {
         return Collections.unmodifiableList(new ArrayList<>(citas));
     }
 
-    // VALIDACIÓN - NO TOCAR
+    // VALIDACIÓN
     private String validarString(String valor, String mensajeError) {
         Objects.requireNonNull(valor, mensajeError);
         if (valor.trim().isEmpty()) {

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-@ToString(exclude = {"departamentos", "pacientes"}) // Evitar recursión
+@ToString(exclude = {"departamentos", "pacientes"}) // Evita recursión
 @Builder
 
 public class Hospital implements Serializable {
@@ -21,7 +21,7 @@ public class Hospital implements Serializable {
     private final List<Departamento> departamentos = new ArrayList<>();
     private final List<Paciente> pacientes = new ArrayList<>();
 
-    // Constructor personalizado MANTENER validaciones
+    // Builder personalizado MANTENER validaciones
     private Hospital(HospitalBuilder builder) {
         this.nombre = validarString(builder.nombre, "El nombre del hospital no puede ser nulo ni vacío");
         this.direccion = validarString(builder.direccion, "La dirección no puede ser nula ni vacía");
@@ -53,7 +53,7 @@ public class Hospital implements Serializable {
         }
     }
 
-    // MÉTODOS DE NEGOCIO CRÍTICOS - NO TOCAR
+    // MÉTODOS DE NEGOCIO
     public void agregarDepartamento(Departamento departamento) {
         if (departamento != null && !departamentos.contains(departamento)) {
             departamentos.add(departamento);
@@ -68,7 +68,7 @@ public class Hospital implements Serializable {
         }
     }
 
-    // GETTERS INMUTABLES PERSONALIZADOS
+    // GETTERS PERSONALIZADOS
     public List<Departamento> getDepartamentos() {
         return Collections.unmodifiableList(departamentos);
     }
@@ -77,7 +77,7 @@ public class Hospital implements Serializable {
         return Collections.unmodifiableList(pacientes);
     }
 
-    // MÉTODOS INTERNOS CRÍTICOS - NO TOCAR
+    // MÉTODOS INTERNOS
     List<Departamento> getInternalDepartamentos() {
         return departamentos;
     }

@@ -22,7 +22,7 @@ public class Medico extends Persona implements Serializable {
 
     @Setter // Solo departamento es mutable
     private Departamento departamento;
-    private final List<Cita> citas = new ArrayList<>(); // Constructor personalizado MANTENER EXACTO
+    private final List<Cita> citas = new ArrayList<>();
 
     protected Medico(MedicoBuilder<?, ?> builder) {
         super(builder);
@@ -45,7 +45,7 @@ public class Medico extends Persona implements Serializable {
         }
     }
 
-    // MÉTODOS DE NEGOCIO - NO TOCAR
+    // MÉTODOS DE NEGOCIO
     public void addCita(Cita cita) {
         this.citas.add(cita);
     }

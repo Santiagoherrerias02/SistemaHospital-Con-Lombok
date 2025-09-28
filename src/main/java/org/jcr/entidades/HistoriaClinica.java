@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-@ToString(exclude = {"paciente"})// Evitar referencia circular
+@ToString(exclude = {"paciente"})   // Evitar referencia circular
 @Builder
 
 public class HistoriaClinica implements Serializable {
@@ -20,7 +20,7 @@ public class HistoriaClinica implements Serializable {
     private final LocalDateTime fechaCreacion;
     private final List<String> diagnosticos = new ArrayList<>();
     private final List<String> tratamientos = new ArrayList<>();
-    private final List<String> alergias = new ArrayList<>(); // Constructor CRÍTICO - genera numeroHistoria automáticamente
+    private final List<String> alergias = new ArrayList<>(); //Genera numeroHistoria automáticamente
 
     private HistoriaClinica(HistoriaClinicaBuilder builder) {
         this.paciente = Objects.requireNonNull(builder.paciente, "El paciente no puede ser nulo");
@@ -47,7 +47,7 @@ public class HistoriaClinica implements Serializable {
         }
     }
 
-    // MÉTODOS DE NEGOCIO - NO TOCAR
+    // MÉTODOS DE NEGOCIO
     private String generarNumeroHistoria() {
         return "HC-" + paciente.getDni() + "-" + fechaCreacion.getYear();
     }

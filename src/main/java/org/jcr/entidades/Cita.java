@@ -31,7 +31,7 @@ public class Cita implements Serializable {
     @Setter
     private String observaciones;
 
-    // CONSTRUCTOR CRÍTICO - NO CAMBIAR NI UNA LÍNEA
+    // BUILDER
     private Cita(CitaBuilder builder) {
         this.paciente = Objects.requireNonNull(builder.paciente, "El paciente no puede ser nulo");
         this.medico = Objects.requireNonNull(builder.medico, "El médico no puede ser nulo");
@@ -91,7 +91,7 @@ public class Cita implements Serializable {
         }
     }
 
-    // MÉTODOS CSV CRÍTICOS - NO TOCAR ABSOLUTAMENTE NADA
+    // MÉTODOS CSV
     public String toCsvString() {
         return String.format("%s,%s,%s,%s,%s,%s,%s",
                 paciente.getDni(),
@@ -145,7 +145,7 @@ public class Cita implements Serializable {
                 .build();
     }
 
-    // SETTERS PERSONALIZADOS CON VALIDACIÓN - MANTENER
+    // SETTERS PERSONALIZADOS CON VALIDACIÓN
     public void setEstado(EstadoCita estado) {
         this.estado = Objects.requireNonNull(estado, "El estado no puede ser nulo");
     }

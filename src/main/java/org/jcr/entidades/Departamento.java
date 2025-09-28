@@ -59,7 +59,7 @@ public class Departamento implements Serializable {
         }
     }
 
-    // MÉTODOS DE NEGOCIO CRÍTICOS - NO TOCAR
+    // MÉTODOS DE NEGOCIO CRÍTICOS
     public void agregarMedico(Medico medico) {
         if (medico != null && !medicos.contains(medico)) {
             medicos.add(medico);
@@ -77,7 +77,7 @@ public class Departamento implements Serializable {
         return sala;
     }
 
-    // GETTERS INMUTABLES PERSONALIZADOS
+    // GETTERS PERSONALIZADOS
     public List<Medico> getMedicos() {
         return Collections.unmodifiableList(medicos);
     }
@@ -86,7 +86,7 @@ public class Departamento implements Serializable {
         return Collections.unmodifiableList(salas);
     }
 
-    // VALIDACIÓN - NO TOCAR
+    // VALIDACIÓN
     private String validarString(String valor, String mensajeError) {
         Objects.requireNonNull(valor, mensajeError);
         if (valor.trim().isEmpty()) {

@@ -31,7 +31,7 @@ public abstract class Persona implements Serializable {
         this.tipoSangre = Objects.requireNonNull(builder.tipoSangre, "El tipo de sangre no puede ser nulo");
     }
 
-    // MÉTODOS DE NEGOCIO - NO TOCAR
+    // MÉTODOS DE NEGOCIO
     public String getNombreCompleto() {
         return nombre + " " + apellido;
     }
@@ -40,7 +40,7 @@ public abstract class Persona implements Serializable {
         return LocalDate.now().getYear() - fechaNacimiento.getYear();
     }
 
-    // VALIDACIONES - NO TOCAR
+    // VALIDACIONES
     private String validarString(String valor, String mensajeError) {
         Objects.requireNonNull(valor, mensajeError);
         if (valor.trim().isEmpty()) {
